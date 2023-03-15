@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+	<title>Windows API - Task</title>
+	<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+</head>
+<body>
+<h4>Windows API - Lab part</h4>
+<p>Pong</p>
+<ul>
+  <li><a href="Pong.exe">Sample application</a></li>
+  <li>Description:
+    <ul>
+	 <li>The application contains of three windows: the main application window, the ball and the paddle</li>
+	 <li>Paddle movement is done by moving the mouse</li>
+	 <li>Ball bounce of main window walls and paddle</li>
+	 <li>When the ball misses the paddle, the game ends - the paddle and ball stop moving</li>
+	 <li><b>Attention:</b> <u>Do not use</u> GDI in Lab part. All objects are WinAPI windows.</li>
+    </ul>
+  </li>
+  <li>Functionality:
+    <ul>
+     <li>Main window:
+       <ul>
+	     <li>Colour: light green, transparency 20%</li>
+	     <li>Has changed title</li>
+	     <li>Size 500x350, fixed size, but can be moved around the screen</li>
+	     <li>At startup, the application window is centred on the screen</li>
+       </ul>
+      </li>
+      <li>Ball:
+       <ul>
+         <li>Round, red colour</li>
+         <li>Position updates every 50 ms (use timers)</li>
+	   </ul>
+	   </li>
+	   <li>Paddle:
+	   <ul>
+         <li>Has the colour of the active title bar</li>
+		 <li>The mouse cursor moves the centre of the paddle</li>
+		 <li>A paddle is moving at the right edge of the main window</li>
+       </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Additional requirements:
+    <ul>
+     <li>Only one window is visible on the taskbar</li>
+     <!--li>okno aplikacji zawsze na wierzchu innych okien</li-->
+     <li>Key shortcut Alt+F4 close the application</li>
+	 <li>Key shortcut Alt+Space still works as in the default application</li>
+    </ul>
+  </li>
+  <li>Tips:
+    <ul>
+      <li>SetLayeredWindowAttributes(), WS_EX_LAYERED, WS_MAXIMIZEBOX</li>
+	  <li>WS_CHILD, WS_CLIPSIBLINGS, WS_CLIPCHILDREN</li>
+	  <li>SetWindowRgn(), GetWindowRect(), MoveWindow()</li>
+		<li>Window regions:
+<pre>HRGN region=CreateEllipticRgn(0,0,10,10);
+SetWindowRgn(hWnd,region,true);</pre></li>
+	  <li>SetTimer(), WM_TIMER</li>
+	  <li>GetCursorPos(), WM_MOUSEMOVE</li>
+	  <li>ClientToScreen(), ScreenToClient()</li>
+	  <li>InvalidateRect()</li>
+    </ul>
+  </li>
+  <li><i>Note: The application should behave like an example app in all doubtful and untold aspects.</i></li>
+</ul>
+
+<ul>
+	<li>Scoring:
+	<ul>
+		<li>Displaying the main window according to the task description: 3 points</li>
+		<li>Displaying paddle window (as child window): 2 points</li>
+		<li>Proper displaying ball window (no movement): 2 points</li>
+		<li>Ball movement (proper timer usage): 2 points</li>
+		<li>Paddle movement: 2 points</li>
+		<li>The ball stops at missing paddle: 1 point</li>
+		<li><i>Note: there are no points for partial functionality</i></li>
+	</ul>
+	</li>
+</ul>
+
+<h4>Windows API - Home part</h4>
+<ul>
+  <li><a href="Pong2.exe">Sample application</a></li>
+  <li>Task description:
+    <ul>
+	 <li>Main menu options</li>
+     <li>Counter of ball bouncing with paddle</li>
+     <li>Ball has trail</li>
+    </ul>
+  </li>
+  <li>Menu:
+       <ul>
+	     <li>Proper menu shortcuts (as in the sample application)</li>
+         <li>Game reset option</li>
+		 <li>Changing background colour using dialog window</li>
+		 <li>Loading bitmap as window background</li>
+		 <li>The bitmap can be tiled or stretched</li>
+		 <li>Menu marks update on the change</li>
+       </ul>
+  </li>
+  <li>Counters:
+       <ul>
+	     <li>Has the colour of the negated background</li>
+	     <li>Left counter count missing ball</li>
+	     <li>Right counter count paddle hits</li>
+		 <li>Counters are centred in 1/4 and 3/4 of window width, respectively</li>
+       </ul>
+  </li>
+  <li>Ball trail:
+       <ul>
+	     <li>It is built with circled windows</li>
+		 <li>Its radius changes with time</li>
+		 <li>When it disappears, it should be removed (not hidden)</li>
+       </ul>
+  </li>
+  <li>Tips:
+    <ul>
+      <li>CreateCompatibleBitmap, BitBlt</li>
+      <li>CreatePatternBrush, SetStretchBltMode</li>
+      <li>TextOut, DrawText, SetTextAlign</li>
+	  <li>ChooseColor, GetOpenFileName</li>
+	  <li>CheckMenuItem, EnableMenuItem</li>
+    </ul>
+  </li>
+  <li><i>Note: In all doubtful and untold aspects application should behave like an example app.</i></li>
+</ul>
+
+<ul>
+	<li>Scoring:
+	<ul>
+		<li>Main menu and game reset: 1 point</li>
+        <li>Main menu shortcuts: 1 point</li>
+        <li>Working counters: 1 point</li>
+        <li>Changing background: 2 points</li>
+        <li>Loading bitmap: 3 points</li>
+        <li>Ball trail: 2 points</li>
+        <li>Changing bitmap mode: 2 points</li>
+		<li><i>Note: To be able to get points from Home part, all requirements from Lab part must be fulfilled</i></li>
+	</ul>
+	</li>
+</ul>
+</body>
+</html>
