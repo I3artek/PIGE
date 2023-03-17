@@ -3,6 +3,7 @@
 #include <string>
 #include <windowsx.h>
 #include <Windows.h>
+#include <commdlg.h>
 
 #define MAX_LOADSTRING 100
 
@@ -37,10 +38,12 @@ VOID CALLBACK MoveBall(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime);
 
 void movePaddle(HWND main_win, LPARAM lParam);
 
-
 HWND paddle_hwnd;
 HWND ball_hwnd;
 HWND main_hwnd;
+
+HWND left_counter;
+HWND right_counter;
 
 //top left point - global later
 POINT paddle_pos = { (MAIN_WIN_W - PADDLE_W), (MAIN_WIN_H - PADDLE_H) / 2 };
@@ -50,8 +53,9 @@ POINT ball_pos = { (MAIN_WIN_W - BALL_D) / 2, (MAIN_WIN_H - BALL_D) / 2 };
 POINT ball_pos_global = {};
 POINT ball_v = { BALL_SPEED, BALL_SPEED };
 
-BOOL ball_hit_right_edge = FALSE;
+HBRUSH bg_color;
 
+BOOL ball_hit_right_edge = FALSE;
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -266,6 +270,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		return FALSE;
 	}
 
+	left_counter = CreateWindow((LPCWSTR)"STATIC", (LPCWSTR)"7", WS_VISIBLE | WS_CHILD | SS_LEFT, MAIN_WIN_W / 4, 100, 100, 100, main_hwnd, NULL, hInstance, NULL);
+	right_counter = CreateWindow((LPCWSTR)"STATIC", (LPCWSTR)"3", WS_VISIBLE | WS_CHILD | SS_LEFT, MAIN_WIN_W * 3 / 4, 100, 100, 100, main_hwnd, NULL, hInstance, NULL);
+
 	ShowWindow(main_hwnd, nCmdShow);
 	UpdateWindow(main_hwnd);
 
@@ -353,6 +360,17 @@ void movePaddle(HWND main_win, LPARAM lParam)
 	*/
 	paddle_pos.y = GET_Y_LPARAM(lParam) - PADDLE_H / 2;
 	SetWindowPos(paddle_hwnd, NULL, MAIN_WIN_W - PADDLE_W, paddle_pos.y, PADDLE_W, PADDLE_H, SWP_SHOWWINDOW | SWP_NOSIZE);
+
+	/*
+	CHOOSECOLOR c = {};
+	c.lStructSize = sizeof(c);
+	c.hwndOwner = main_hwnd;
+	ChooseColor(&c);
+	*/
+
+	bg_color = CreateSolidBrush(RGB(0, 0, paddle_pos.y % 256));
+	SetClassLongPtr(main_hwnd, GCLP_HBRBACKGROUND, (LONG_PTR)bg_color);
+	InvalidateRect(main_hwnd, 0, TRUE);
 }
 
 void DetectCollisions()
