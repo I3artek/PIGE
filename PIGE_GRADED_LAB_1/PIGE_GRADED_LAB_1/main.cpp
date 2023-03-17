@@ -22,6 +22,10 @@ WCHAR szWindowClass[MAX_LOADSTRING];
 WCHAR paddleWindowClass[MAX_LOADSTRING];
 WCHAR ballWindowClass[MAX_LOADSTRING];
 
+// https://learn.microsoft.com/pl-pl/windows/win32/dlgbox/using-common-dialog-boxes?redirectedfrom=MSDN
+static COLORREF acrCustClr[16];
+static DWORD rgbCurrent;
+
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -310,6 +314,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 
 		break;
+
+		case WM_KEYDOWN:
+			if (wParam == VK_F2)
+			{
+				CHOOSECOLOR cc;
+
+				ZeroMemory(&cc, sizeof(cc));
+				cc.lStructSize = sizeof(cc);
+				cc.hwndOwner = main_hwnd;
+				cc.rgbResult = rgbCurrent;
+				cc.Flags = CC_FULLOPEN | CC_RGBINIT;
+				cc.lpCustColors = (LPDWORD)acrCustClr;
+
+				if (ChooseColor(&cc) == TRUE)
+				{
+					bg_color = CreateSolidBrush(cc.rgbResult);
+					SetClassLongPtr(main_hwnd, GCLP_HBRBACKGROUND, (LONG_PTR)bg_color);
+					InvalidateRect(main_hwnd, 0, TRUE);
+				}
+			}
+			break;
+
+
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			break;
@@ -368,9 +395,9 @@ void movePaddle(HWND main_win, LPARAM lParam)
 	ChooseColor(&c);
 	*/
 
-	bg_color = CreateSolidBrush(RGB(0, 0, paddle_pos.y % 256));
-	SetClassLongPtr(main_hwnd, GCLP_HBRBACKGROUND, (LONG_PTR)bg_color);
-	InvalidateRect(main_hwnd, 0, TRUE);
+	//bg_color = CreateSolidBrush(RGB(0, 0, paddle_pos.y % 256));
+	//SetClassLongPtr(main_hwnd, GCLP_HBRBACKGROUND, (LONG_PTR)bg_color);
+	//InvalidateRect(main_hwnd, 0, TRUE);
 }
 
 void DetectCollisions()
