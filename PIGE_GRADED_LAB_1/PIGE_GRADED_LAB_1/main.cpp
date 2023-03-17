@@ -1,9 +1,15 @@
 #include "framework.h"
-//#include "tutorial.h"
+#include "resource.h"
 #include <string>
 #include <windowsx.h>
 #include <Windows.h>
 #include <commdlg.h>
+
+/*
+* What works:
+* Main menu and game reset: 1 point
+* Changing background: 2 points
+*/
 
 #define MAX_LOADSTRING 100
 
@@ -42,6 +48,8 @@ VOID CALLBACK MoveBall(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime);
 
 void movePaddle(HWND main_win, LPARAM lParam);
 
+void reset_game();
+
 HWND paddle_hwnd;
 HWND ball_hwnd;
 HWND main_hwnd;
@@ -54,7 +62,7 @@ POINT paddle_pos = { (MAIN_WIN_W - PADDLE_W), (MAIN_WIN_H - PADDLE_H) / 2 };
 
 //top left point
 POINT ball_pos = { (MAIN_WIN_W - BALL_D) / 2, (MAIN_WIN_H - BALL_D) / 2 };
-POINT ball_pos_global = {};
+POINT ball_pos_initial = ball_pos;
 POINT ball_v = { BALL_SPEED, BALL_SPEED };
 
 HBRUSH bg_color;
@@ -124,7 +132,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.hIcon = nullptr;
 	wcex.hCursor = nullptr;
 	wcex.hbrBackground = CreateSolidBrush(RGB(140, 255, 140));//reinterpret_cast <HBRUSH>(COLOR_WINDOW + 1);
-	wcex.lpszMenuName = nullptr;
+	wcex.lpszMenuName = MAKEINTRESOURCE(IDR_MENU1);
 
 	wcex.lpszClassName = szWindowClass;
 	wcex.hIconSm = nullptr;
@@ -293,31 +301,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			int wmId = LOWORD(wParam);
 			switch (wmId)
 			{
-				/*
-			case IDM_ABOUT:
-				// DialogBox (hInst , MAKEINTRESOURCE ( IDD_ABOUTBOX ), hWnd, About );
+			case ID_FILE_EXIT:
+				DestroyWindow(main_hwnd);
 				break;
-			case IDM_EXIT:
-				DestroyWindow(hWnd);
+				
+			case ID_HELP_ABOUT:
+				DialogBox (hInst, MAKEINTRESOURCE(ID_HELP_ABOUT), hWnd, About);
 				break;
-				*/
-			default:
-				return DefWindowProc(hWnd, message, wParam, lParam);
-			}
-		}
-		break;
-		case WM_PAINT:
-		{
-			PAINTSTRUCT ps;
-			HDC hdc = BeginPaint(hWnd, &ps);
-			EndPaint(hWnd, &ps);
-		}
-
-		break;
-
-		case WM_KEYDOWN:
-			if (wParam == VK_F2)
-			{
+			case ID_BACKGROUND_COLOR:
 				CHOOSECOLOR cc;
 
 				ZeroMemory(&cc, sizeof(cc));
@@ -333,9 +324,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					SetClassLongPtr(main_hwnd, GCLP_HBRBACKGROUND, (LONG_PTR)bg_color);
 					InvalidateRect(main_hwnd, 0, TRUE);
 				}
+				break;
+			case ID_FILE_NEWGAME:
+				reset_game();
+				break;
+			default:
+				return DefWindowProc(hWnd, message, wParam, lParam);
 			}
-			break;
+		}
+		break;
+		case WM_PAINT:
+		{
+			PAINTSTRUCT ps;
+			HDC hdc = BeginPaint(hWnd, &ps);
+			EndPaint(hWnd, &ps);
+		}
 
+		break;
 
 		case WM_DESTROY:
 			PostQuitMessage(0);
@@ -387,17 +392,6 @@ void movePaddle(HWND main_win, LPARAM lParam)
 	*/
 	paddle_pos.y = GET_Y_LPARAM(lParam) - PADDLE_H / 2;
 	SetWindowPos(paddle_hwnd, NULL, MAIN_WIN_W - PADDLE_W, paddle_pos.y, PADDLE_W, PADDLE_H, SWP_SHOWWINDOW | SWP_NOSIZE);
-
-	/*
-	CHOOSECOLOR c = {};
-	c.lStructSize = sizeof(c);
-	c.hwndOwner = main_hwnd;
-	ChooseColor(&c);
-	*/
-
-	//bg_color = CreateSolidBrush(RGB(0, 0, paddle_pos.y % 256));
-	//SetClassLongPtr(main_hwnd, GCLP_HBRBACKGROUND, (LONG_PTR)bg_color);
-	//InvalidateRect(main_hwnd, 0, TRUE);
 }
 
 void DetectCollisions()
@@ -407,7 +401,7 @@ void DetectCollisions()
 		ball_v.y *= -1;
 		ball_pos.y += ball_v.y * 2;
 	}
-	if (ball_pos.y >= (MAIN_WIN_H - 3 * BALL_D))
+	if (ball_pos.y >= (MAIN_WIN_H - 4 * BALL_D))
 	{
 		ball_v.y *= -1;
 		ball_pos.y += ball_v.y * 2;
@@ -447,5 +441,11 @@ VOID CALLBACK MoveBall(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime)
 	}
 }
 
+
+void reset_game()
+{
+	ball_pos = ball_pos_initial;
+	ball_v = { BALL_SPEED, BALL_SPEED };
+}
 
 
